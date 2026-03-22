@@ -98,7 +98,21 @@ include("db.php");
 
         <?php } ?>
 
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
 
+        <img id="modalImg" src="" style="width:100px;"><br><br>
+        <h2 id="modalName"></h2>
+        <h3 id="modalPrice"></h3>
+
+        <!-- USER INFO -->
+        <input type="text" id="userName" placeholder="Your Name"><br><br>
+        <input type="text" id="userAddress" placeholder="Your Address"><br><br>
+
+        <button id="confirmBtn">Confirm Buy</button>
+    </div>
+</div>
     </div>
     <div id="productModal" class="modal">
     <div class="modal-content">
@@ -114,32 +128,66 @@ include("db.php");
 
 
 </body>
-<script>
-    const modal = document.getElementById("productModal");
-    const closeBtn = document.querySelector(".close");
 
-    const modalImg = document.getElementById("modalImg");
-    const modalName = document.getElementById("modalName");
-    const modalPrice = document.getElementById("modalPrice");
+    <script>
+const modal = document.getElementById("productModal");
+const closeBtn = document.querySelector(".close");
 
-    document.querySelectorAll(".buyBtn").forEach(button => {
-        button.addEventListener("click", function () {
+const modalImg = document.getElementById("modalImg");
+const modalName = document.getElementById("modalName");
+const modalPrice = document.getElementById("modalPrice");
 
-            modal.style.display = "block";
+const confirmBtn = document.getElementById("confirmBtn");
 
-            modalImg.src = "image/" + this.dataset.image;
-            modalName.textContent = this.dataset.name;
-            modalPrice.textContent = "P" + this.dataset.price;
-        });
+let selectedProduct = {}; // store product info
+
+document.querySelectorAll(".buyBtn").forEach(button => {
+    button.addEventListener("click", function(){
+
+        modal.style.display = "block";
+
+        // store values
+        selectedProduct = {
+            id: this.dataset.id,
+            name: this.dataset.name,
+            price: this.dataset.price
+        };
+
+        modalImg.src = "image/" + this.dataset.image;
+        modalName.textContent = this.dataset.name;
+        modalPrice.textContent = "P" + this.dataset.price;
     });
+});
 
-    closeBtn.onclick = () => modal.style.display = "none";
+// CONFIRM BUTTON
+confirmBtn.addEventListener("click", function(){
 
-    window.onclick = (e) => {
-        if (e.target == modal) {
-            modal.style.display = "none";
-        }
+    const name = document.getElementById("userName").value;
+    const address = document.getElementById("userAddress").value;
+
+    if(name === "" || address === ""){
+        alert("Please fill up all fields!");
+        return;
     }
+
+    alert(
+        "Order Confirmed!\n\n" +
+        "Name: " + name + "\n" +
+        "Address: " + address + "\n" +
+        "Product: " + selectedProduct.name + "\n" +
+        "Price: P" + selectedProduct.price
+    );
+
+    modal.style.display = "none";
+});
+
+closeBtn.onclick = () => modal.style.display = "none";
+
+window.onclick = (e) => {
+    if(e.target == modal){
+        modal.style.display = "none";
+    }
+}
 </script>
 
 </html>
