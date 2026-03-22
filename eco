@@ -1,0 +1,145 @@
+<?php
+include("db.php");
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommerse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #a0c3f8;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+
+
+        .container {
+            margin: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .card img {
+            width: 40%;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 300px;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 100px auto;
+            text-align: center;
+        }
+
+        .close {
+            float: right;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <?php
+        $sql = "SELECT * FROM products";
+        $result = mysqli_query($conn, $sql);
+        while ($row = mysqli_fetch_assoc($result)) {
+
+            ?>
+            <div class="card">
+                <img src="image/<?= $row["image"] ?>">
+
+
+                <h2><?= $row["product_name"] ?></h2>
+                <h3>P<?= $row["price"] ?></h3>
+
+                <button class="buyBtn" 
+                data-id="<?= $row["product_id"] ?>" 
+                data-name="<?= $row["product_name"] ?>"
+                data-price="<?= $row["price"] ?>" 
+                data-image="<?= $row["image"] ?>">
+                    Buy
+                </button>
+            </div>
+
+        <?php } ?>
+
+
+    </div>
+    <div id="productModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+
+        <img id="modalImg" src="" style="width:100px;"><br><br>
+        <h2 id="modalName"></h2>
+        <h3 id="modalPrice"></h3>
+
+        <button>Confirm Buy</button>
+    </div>
+</div>
+
+
+</body>
+<script>
+    const modal = document.getElementById("productModal");
+    const closeBtn = document.querySelector(".close");
+
+    const modalImg = document.getElementById("modalImg");
+    const modalName = document.getElementById("modalName");
+    const modalPrice = document.getElementById("modalPrice");
+
+    document.querySelectorAll(".buyBtn").forEach(button => {
+        button.addEventListener("click", function () {
+
+            modal.style.display = "block";
+
+            modalImg.src = "image/" + this.dataset.image;
+            modalName.textContent = this.dataset.name;
+            modalPrice.textContent = "P" + this.dataset.price;
+        });
+    });
+
+    closeBtn.onclick = () => modal.style.display = "none";
+
+    window.onclick = (e) => {
+        if (e.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+</html>
